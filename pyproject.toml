@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "shop_model"
+version = "0.3.0"
+requires-python = ">=3.11"
+dependencies = [
+    "pandas>=2.0",              # Creates and processes tables of data using DataFrames.
+    "scikit-learn>=1.4",        # Trains the classification model and calculates predictions and accuracy.
+    "joblib>=1.3",              # Saves the trained model to disk and loads it again.
+    "pyyaml>=6.0",              # Reads YAML configuration files, such as config/config.yaml.
+    "python-dotenv>=1.0",       # Loads settings from .env into environment variables.
+    "fastapi>=0.110",           # Defines API endpoints and validates incoming requests.
+    "uvicorn>=0.29",            # Runs the FastAPI application as an HTTP server.
+    "psycopg[binary]>=3.2",     # Connects to PostgreSQL and executes SQL; [binary] includes precompiled support.
+    "prometheus-client>=0.20",  # Keeps metrics inside the running program and formats them on request
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+
+[project.scripts]
+shop-train = "shop_model.train:main"
+
+
