@@ -44,6 +44,27 @@ environment activated:
 | `make version` | Prints the project version from `pyproject.toml`. |
 | `make ci` | Runs `lint`, `test`, `validate`, `gate` and `build` in order, stopping at the first failure. |
 
+## Continuous integration
+
+The GitHub Actions workflow in `.github/workflows/ci.yml` runs on every push
+and pull request. It sets up Python 3.12, installs the dependencies, copies
+`env.example` to `.env`, and runs `make ci`: lint checks, tests, data validation,
+the model accuracy gate and the Docker image build. It stops at the first failure.
+
+After a successful push to `main`, the workflow publishes the image to GitHub
+Container Registry at `ghcr.io/<owner>/shop-model`, where `<owner>` is the
+repository owner's name in lowercase. It publishes two tags: the version from
+`pyproject.toml` and that version followed by the short Git commit hash, for
+example `0.4.0` and `0.4.0-<commit>`.
+
+To release a new version:
+
+1. Update `[project].version` in `pyproject.toml`, for example from `0.4.0` to `0.5.0`.
+2. Run `make ci` locally with the virtual environment activated and Docker running.
+3. Commit the version change and push or merge it into `main`.
+4. Check that the workflow succeeds in GitHub Actions. It then publishes both
+   image tags automatically; no Git tag or GitHub Release is required.
+
 ## Train
 
 ```bash
