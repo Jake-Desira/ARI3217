@@ -31,6 +31,9 @@ RUN pip install --no-cache-dir --no-deps .
 # Containers created from this image will already have the trained model.
 RUN shop-train
 
+ARG MODEL_VERSION=dev
+ENV MODEL_VERSION=${MODEL_VERSION}
+
 # Document that the application listens on port 8888.
 # This does not publish the port; docker run needs -p to do that.
 EXPOSE 8888

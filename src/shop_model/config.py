@@ -1,6 +1,5 @@
 import os
 
-from pandera import config
 import yaml
 
 def load_config (path=None):
