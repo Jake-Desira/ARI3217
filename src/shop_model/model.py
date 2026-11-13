@@ -24,8 +24,8 @@ def train_model(df, seed):
 
 #save the model
 def save_model (model, path):
-    Path(path).parent.mkdir (parents=True, exist_ok=True);
-    joblib.dump (model, path);
+    Path(path).parent.mkdir (parents=True, exist_ok=True)
+    joblib.dump (model, path)
     logger.info ("Model saved in %s", path)
 
 

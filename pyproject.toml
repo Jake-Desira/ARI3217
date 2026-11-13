@@ -4,24 +4,45 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "shop_model"
-version = "0.3.0"
+
+# make build reads this value to tag the image as shop-model:0.4.0.
+version = "0.4.0"
 requires-python = ">=3.11"
+
 dependencies = [
-    "pandas>=2.0",              # Creates and processes tables of data using DataFrames.
-    "scikit-learn>=1.4",        # Trains the classification model and calculates predictions and accuracy.
-    "joblib>=1.3",              # Saves the trained model to disk and loads it again.
-    "pyyaml>=6.0",              # Reads YAML configuration files, such as config/config.yaml.
-    "python-dotenv>=1.0",       # Loads settings from .env into environment variables.
-    "fastapi>=0.110",           # Defines API endpoints and validates incoming requests.
-    "uvicorn>=0.29",            # Runs the FastAPI application as an HTTP server.
-    "psycopg[binary]>=3.2",     # Connects to PostgreSQL and executes SQL; [binary] includes precompiled support.
-    "prometheus-client>=0.20",  # Keeps metrics inside the running program and formats them on request
+    "pandas>=2.0",              # Works with tables of shop data, including prices and sales.
+    "scikit-learn>=1.4",        # Trains the model and calculates predictions and evaluation scores.
+    "joblib>=1.3",              # Saves the trained model to a file and loads it when the API starts.
+    "pyyaml>=6.0",              # Reads project settings from config/config.yaml.
+    "python-dotenv>=1.0",       # Loads values from .env so Python can read them as environment variables.
+    "fastapi>=0.110",           # Defines routes such as /predict and checks the data sent to them.
+    "uvicorn>=0.29",            # Starts the server that receives HTTP requests and passes them to FastAPI.
+    "psycopg[binary]>=3.2",     # Lets Python write predictions to PostgreSQL. [binary] requests a precompiled version.
+    "prometheus-client>=0.20",  # Tracks request counts and timings for Prometheus to collect from /metrics.
 ]
 
 [project.optional-dependencies]
-dev = ["pytest>=8.0"]
+# The [dev] in pip install -e ".[dev]" selects this extra group of packages.
+dev = [
+    "pytest>=8.0",        # Runs the tests in tests/ and reports which ones passed or failed.
+    "ruff>=0.15",         # Flags code issues such as using a variable you never defined.
+    "pandera>=0.30",      # Checks the data itself, such as whether the price column contains numbers.
+    "hypothesis>=6.100",  # Generates inputs for pytest, so a test can check VAT behaviour across many prices.
+]
 
 [project.scripts]
-shop-train = "shop_model.train:main"
+# Installing the project creates the commands on the left.
+# The right side tells Python which module and function to run.
+shop-train = "shop_model.train:main"        # Run main() in train.py to train and save the model.
+shop-validate = "shop_model.validate:main"  # Run main() in validate.py to check the input data.
+shop-gate = "shop_model.evaluate:main"      # Run main() in evaluate.py to score the model and check the minimum accuracy.
 
+[tool.ruff]
+# Gives line-length rules a limit of 120 characters. The rules selected below do not enable the check that flags lines for being too long.
+line-length = 120
 
+[tool.ruff.lint]
+# These prefixes tell Ruff which groups of checks to run.
+# E4, E7 and E9 cover selected import, statement and syntax checks.
+# F catches issues such as unused imports and undefined names.
+select = ["E4", "E7", "E9", "F"]

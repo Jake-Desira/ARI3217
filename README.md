@@ -26,6 +26,24 @@ cp env.example .env
 ```bash
 pytest
 ```
+
+## The pipeline
+
+Run these targets with `make` from the project folder, with the virtual
+environment activated:
+
+| Target | What it does |
+| --- | --- |
+| `make install` | Installs the requirements and the project in editable mode with development dependencies. |
+| `make lint` | Runs Ruff checks on `src` and `tests`. |
+| `make test` | Runs the test suite with `pytest -q`. |
+| `make validate` | Runs `shop-validate` to check the input data. |
+| `make gate` | Runs `shop-gate` to score the model and check the minimum accuracy, using the `holdout` split by default. Override it with `make gate GATE_SPLIT=<split>`. |
+| `make build` | Builds the Docker image, passes the project version as `MODEL_VERSION`, and tags the image with both the version and the version plus Git commit. The image name defaults to `shop-model`; override it with `IMAGE=<name>`. |
+| `make up` | Builds and starts the Docker Compose services in the background, setting `MODEL_VERSION` to the project version. |
+| `make version` | Prints the project version from `pyproject.toml`. |
+| `make ci` | Runs `lint`, `test`, `validate`, `gate` and `build` in order, stopping at the first failure. |
+
 ## Train
 
 ```bash
