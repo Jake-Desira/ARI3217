@@ -1,0 +1,31 @@
+# Session 5, Stage 13: GitHub runs the same `make ci` you run locally.
+name: ci
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    # GitHub provides a fresh runner for each job.
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - run: make install
+
+      # Use the example values for CI.
+      - run: cp env.example .env
+
+      - name: Set the lowercase image name
+        run: echo "IMAGE=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/shop-model" >> "$GITHUB_ENV"
+
+      - run: make ci IMAGE="$IMAGE" SOURCE="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY"
