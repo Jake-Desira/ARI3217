@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: read
+  packages: write # Lets the run's own token push to ghcr.io (used on main only).
 
 jobs:
   ci:
@@ -29,3 +30,14 @@ jobs:
         run: echo "IMAGE=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/shop-model" >> "$GITHUB_ENV"
 
       - run: make ci IMAGE="$IMAGE" SOURCE="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY"
+
+      # Publish the image after a successful run on main.
+      - if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: make publish IMAGE="$IMAGE"
